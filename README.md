@@ -1,4 +1,4 @@
-# Javaで学ぶDesign Pattern
+# Javaで学ぶDesign Pattern--結城浩
 ## Iterator
 - 数え上げ
 ## Adaptor
@@ -38,3 +38,14 @@
   - インスタンスを作成するためのインターフェイスを定める
 - ConcreteBuilder
   - Builderを実装している
+## abstract factory
+- 具体には注目せずに、インターフェイスにだけ着目してプログラムを作る
+## bridge
+- 機能のクラスと実装のクラスを橋渡しする
+
+## strategy
+- 戦略・アルゴリズムを置き換える
+
+## composite
+- 容器と中身を同一視して、再帰的な構造を作る
+- 容器と中身をそのひとつ上のレイヤーで捉える
