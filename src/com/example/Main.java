@@ -11,12 +11,14 @@ import com.example.bridge.Display;
 import com.example.bridge.StringDisplayImpl;
 import com.example.builder.Director;
 import com.example.builder.TextBuilder;
+import com.example.chainofrepository.*;
 import com.example.composite.Directory;
 import com.example.composite.File;
 import com.example.composite.FileTreatmentException;
 import com.example.decorator.FullBorder;
 import com.example.decorator.SideBorder;
 import com.example.decorator.StringDisplay;
+import com.example.facade.PageMaker;
 import com.example.iterator.Book;
 import com.example.iterator.BookShelf;
 import com.example.iterator.Iterator;
@@ -237,7 +239,29 @@ public class Main {
         } catch (FileTreatmentException e) {
             e.printStackTrace();
         }
+        // -------------------------------
+        // Chain of Responsibility
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Chain of Responsibility");
+        System.out.println("-------------------------------");
+        Support alice = new NoSupport("Alice");
+        Support bob = new LimitSupport("Bob", 100);
+        Support charlie = new LimitSupport("Charlie", 429);
+        Support diana = new LimitSupport("Diana", 200);
+        Support elmo = new OddSupport("Elmo");
+        Support fred = new LimitSupport("Fred", 300);
+        alice.setNext(bob).setNext(charlie).setNext(diana).setNext(elmo).setNext(fred);
+        for (int i = 0; i < 500; i+=33) {
+            alice.support(new Trouble(i));
+        }
+        // -------------------------------
+        // Facade
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Facade");
+        System.out.println("-------------------------------");
+        PageMaker.makeWelcomePage("example@example.com", "welcome.html");
 
     }
-
 }
