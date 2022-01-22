@@ -14,20 +14,20 @@ import com.example.builder.TextBuilder;
 import com.example.composite.Directory;
 import com.example.composite.File;
 import com.example.composite.FileTreatmentException;
+import com.example.decorator.FullBorder;
+import com.example.decorator.SideBorder;
+import com.example.decorator.StringDisplay;
 import com.example.iterator.Book;
 import com.example.iterator.BookShelf;
 import com.example.iterator.Iterator;
 import com.example.singletom.Singleton;
-import com.example.singletom.TicketMaker;
 import com.example.strategy.Hand;
 import com.example.strategy.Player;
 import com.example.strategy.ProbStrategy;
 import com.example.strategy.WinningStategy;
+import com.example.visitor.ListVisitor;
 
-import javax.xml.xpath.XPathEvaluationResult;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
 
@@ -180,12 +180,64 @@ public class Main {
             e.printStackTrace();
         }
 
+        // -------------------------------
+        // Decorator
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Decorator");
+        System.out.println("-------------------------------");
+        com.example.decorator.Display b1 = new StringDisplay("hello wolrd");
+        com.example.decorator.Display b2 = new SideBorder(b1, '#');
+        com.example.decorator.Display b3 = new FullBorder(b2);
+        b1.show();
+        b2.show();
+        b3.show();
+        com.example.decorator.Display b4 = new SideBorder(
+                new FullBorder(
+                        new FullBorder(
+                                new SideBorder(
+                                        new FullBorder(
+                                                new StringDisplay("Hello World")
+                                        ),
+                                        '*'
+                                )
+                        )
+                ),
+                '/'
+        );
+        b4.show();
+        // -------------------------------
+        // Visitor
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Visitor");
+        System.out.println("-------------------------------");
+        System.out.println("Making root entries");
+        try {
+            com.example.visitor.Directory rootDir = new com.example.visitor.Directory("root");
+            com.example.visitor.Directory binDir = new com.example.visitor.Directory("bin");
+            com.example.visitor.Directory tmpDir = new com.example.visitor.Directory("tmp");
+            com.example.visitor.Directory usrDir = new com.example.visitor.Directory("usr");
+            rootDir.add(binDir);
+            rootDir.add(tmpDir);
+            rootDir.add(usrDir);
+            binDir.add(new com.example.visitor.File("vi", 10000));
+            binDir.add(new com.example.visitor.File("latex", 20000));
+            rootDir.accept(new ListVisitor());
+            System.out.println("");
+            System.out.println("Making User Entries");
 
-
-
-
-
-
+            com.example.visitor.Directory yuki = new com.example.visitor.Directory("yuki");
+            com.example.visitor.Directory hanako = new com.example.visitor.Directory("hanako");
+            usrDir.add(yuki);
+            usrDir.add(hanako);
+            yuki.add(new com.example.visitor.File("diary.html", 100));
+            hanako.add(new com.example.visitor.File("memo.txt", 300));
+            rootDir.accept(new ListVisitor());
+        } catch (FileTreatmentException e) {
+            e.printStackTrace();
+        }
 
     }
+
 }
