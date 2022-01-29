@@ -12,6 +12,7 @@ import com.example.bridge.StringDisplayImpl;
 import com.example.builder.Director;
 import com.example.builder.TextBuilder;
 import com.example.chainofrepository.*;
+import com.example.command.CommandMain;
 import com.example.composite.Directory;
 import com.example.composite.File;
 import com.example.composite.FileTreatmentException;
@@ -19,21 +20,36 @@ import com.example.decorator.FullBorder;
 import com.example.decorator.SideBorder;
 import com.example.decorator.StringDisplay;
 import com.example.facade.PageMaker;
+import com.example.flyweight.BigString;
+import com.example.interpreter.Context;
+import com.example.interpreter.Node;
+import com.example.interpreter.ParseException;
+import com.example.interpreter.ProgramNode;
 import com.example.iterator.Book;
 import com.example.iterator.BookShelf;
 import com.example.iterator.Iterator;
+import com.example.mediator.LoginFrame;
+import com.example.memento.Game;
+import com.example.memento.Memento;
+import com.example.observer.*;
+import com.example.proxy.Printable;
+import com.example.proxy.PrinterProxy;
 import com.example.singletom.Singleton;
+import com.example.state.SafeFrame;
 import com.example.strategy.Hand;
 import com.example.strategy.Player;
 import com.example.strategy.ProbStrategy;
 import com.example.strategy.WinningStategy;
 import com.example.visitor.ListVisitor;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         // -------------------------------
         // Iterator
         // -------------------------------
@@ -262,6 +278,141 @@ public class Main {
         System.out.println("Facade");
         System.out.println("-------------------------------");
         PageMaker.makeWelcomePage("example@example.com", "welcome.html");
+       // -------------------------------
+        // Observer
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Observer");
+        System.out.println("-------------------------------");
+        NumberGenerator generator = new RandomNumberGenerator();
+        Observer observer1 = new DigitObserver();
+        Observer observer2 = new GraphObserver();
+        generator.addObservers(observer1);
+        generator.addObservers(observer2);
+        generator.execute();
+
+        // -------------------------------
+        // Memento
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Memento");
+        System.out.println("-------------------------------");
+        Game gamer = new Game(100);
+        // 最初の状態を保存しておく
+        Memento memento= gamer.createMemento();
+        for (int i = 0; i < 100; i++) {
+            // 回数表示
+            System.out.println("=== " + i);
+            // 現在の主人公の状態を表示
+            System.out.println("現状 " + gamer);
+            // gameを進める
+            gamer.bet();
+            // 現在の状態
+            System.out.println("所持金は" + gamer.getMoney() + "円になりました");
+
+            //Mementoの取り扱い決定
+            if (gamer.getMoney() > memento.getMoney()) {
+                System.out.println(" 所持金が増えたので、現在の状態を保存しておく");
+                memento = gamer.createMemento();
+            } else if (gamer.getMoney() < memento.getMoney() /2 ) {
+                System.out.println("所持金が減ったので以前の状態に復帰する");
+                gamer.restoreMemento(memento);
+            }
+
+            // 実行待ち
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("");
+        }
+        // -------------------------------
+        // FlyWeight
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("FlyWeight");
+        System.out.println("-------------------------------");
+
+        BigString bs = new BigString("987635421");
+        bs.print();
+        // -------------------------------
+        // Proxy
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Proxy");
+        System.out.println("-------------------------------");
+        Printable p = new PrinterProxy("Alice");
+        System.out.println("Current Name is" + p.getPrinterName());
+        p.setPrinterName("Bob");
+        System.out.println("Current Name is" + p.getPrinterName());
+        p.print("Hello World");
+        // -------------------------------
+        // Command
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Command");
+        System.out.println("-------------------------------");
+        new CommandMain("Command Pattern Sample");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // -------------------------------
+        // Mediator
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Mediator");
+        System.out.println("-------------------------------");
+        new LoginFrame("Mediator Sample");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // -------------------------------
+        // interpreter
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("Interpreter");
+        System.out.println("-------------------------------");
+        String pathIterpreter = System.getProperty("user.dir");
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(pathIterpreter + "/src/com/example/interpreter/program.txt"));
+            String text;
+            while ((text = reader.readLine()) != null){
+                System.out.println("text = \"" + text + "\"");
+                Node node = new ProgramNode();
+                node.parse(new Context(text));
+                System.out.println("node =" + node);
+
+            }
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        // -------------------------------
+        // State
+        // -------------------------------
+        System.out.println("-------------------------------");
+        System.out.println("State");
+        System.out.println("-------------------------------");
+        SafeFrame frame = new SafeFrame("State Sample");
+        while (true) {
+            for (int hour = 0; hour < 24; hour++) {
+                frame.setClock(hour);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+
+
 
     }
 }
